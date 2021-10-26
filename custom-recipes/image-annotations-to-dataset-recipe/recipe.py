@@ -64,7 +64,7 @@ if data_format == "coco":
     annotations_file_path = parameters.get("annotations_file_path")
     logging.info(annotations_file_path)
     # annotations = dkujson.load_from_filepath(annotations_file_path)  # ne marche qu'en local avec path complet. ou alors fich = get_download_stream(filepath) puis dkujson.load_from_filepath(fich)?
-    annotations = image_folder.read_json(annotations_file_path)
+    annotations = input_folder.read_json(annotations_file_path)
 
     logging.info(annotations)
 
