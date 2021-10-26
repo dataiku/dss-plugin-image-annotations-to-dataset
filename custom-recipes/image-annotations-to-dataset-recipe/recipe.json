@@ -54,7 +54,7 @@
             "selectChoices": [{ "value": "coco", "label": "COCO format"},
                               { "value": "voc", "label": "Pascal VOC"}
             ],
-            "defaultValue" : "COCO", // todo here prefill with smarter choice once we add format guesser
+            "defaultValue" : "coco", // todo here prefill with smarter choice once we add format guesser
             "description": "Format of your input's data",
             "mandatory": true
         },
