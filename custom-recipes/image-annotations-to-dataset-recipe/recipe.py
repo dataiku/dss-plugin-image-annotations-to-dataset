@@ -29,14 +29,26 @@ def generate_path_list(folder: dataiku.Folder):
         for partition in folder.read_partitions:
             path_list += folder.list_paths_in_partition(partition)
     else:
-        path_list = folder.list_paths_in_partition()
+        path_list = folder.list_paths_in_partition()  # ['/coco val2017/coco val2017/000000182611.jpg',  ... '/coco val2017.zip'] liste TOUT en relatif depuis racine
         logging.info(path_list)
 
     return [folder.get_path_details(path) for path in path_list]
 
-
 input_folder = dataiku.Folder(get_input_names_for_role("input_folder")[0])
-logging.info(generate_path_list(input_folder))
+
+
+# logging.info(generate_path_list(input_folder))
+# folder.get_path_details(path) renvoie:
+# {'mimeType': 'image/jpeg',
+# 'truncated': False,
+# 'name': '000000182611.jpg',
+# 'fullPath': '/coco val2017/coco val2017/000000182611.jpg',
+# 'pathElts': ['', 'coco val2017', 'coco val2017', '000000182611.jpg'],
+# 'exists': True,
+# 'directory': False,
+# 'size': 139317,
+# 'lastModified': 1635252276000,
+# 'children': []}
 
 output_dataset = dataiku.Dataset(get_output_names_for_role("output_dataset")[0])
 logging.info(output_dataset)
@@ -51,7 +63,9 @@ if data_format == "coco":
 
     annotations_file_path = parameters.get("annotations_file_path")
     logging.info(annotations_file_path)
-    annotations = dkujson.load_from_filepath(annotations_file_path)
+    # annotations = dkujson.load_from_filepath(annotations_file_path)  # ne marche qu'en local avec path complet. ou alors fich = get_download_stream(filepath) puis dkujson.load_from_filepath(fich)?
+    annotations = image_folder.read_json(annotations_file_path)
+
     logging.info(annotations)
 
 output_df = pd.DataFrame([{"annotations": "toto", "path": "toto/tata/titi.jpeg"}])
