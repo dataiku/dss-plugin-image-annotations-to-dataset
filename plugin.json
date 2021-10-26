@@ -1,17 +1,17 @@
 {
-    "id": "your-plugin-id",
+    "id": "image-annotations-to-dataset",
     "version": "0.1.0",
     "meta": {
-        "label": "Plugin template - Replace by your plugin label",
+        "label": "Image annotations to Dataset",
         "category": "Your category (optional)",
-        "description": "Your description (keep it short and simple)",
-        "author": "Organization (firstName LASTNAME)",
-        "icon": "icon-font-awesome-3.2.1",
+        "description": "Plugin recipe that takes a folder containing images & annotations and create a dataset well-formatted for Deephub",
+        "author": "Dataiku (Claire BEHUE)",
+        "icon": "icon-exchange",
         "licenseInfo": "Apache Software License",
-        "url": "https://www.dataiku.com/product/plugins/your-plugin-id/",
+        "url": "https://www.dataiku.com/product/plugins/image-annotations-to-dataset/",
         "tags": [
-            "myTag"
+            "Deep Learning", "Data Preparation", "Computer Vision", "Labeling"
         ],
-        "supportLevel": "NOT_SUPPORTED"
+        "supportLevel": "SUPPORTED"
     }
 }

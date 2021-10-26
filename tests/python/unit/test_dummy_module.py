@@ -3,7 +3,7 @@
 # pytest automatically runs all the function starting with "test_"
 # see https://docs.pytest.org for more information
 
-from dummy_module import dummy_function
+from lib import dummy_function
 
 
 def test_dummy_function():
