@@ -79,10 +79,10 @@
         {
             "name": "annotations_folder_path",
             "visibilityCondition" : "model.input_data_format == 'voc'",
-            "label": "Image folder",
+            "label": "Annotations folder path",
             "type": "STRING",
             //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
-            "description": "Relative path of the folder containing the images (from managed folder root)",
+            "description": "Relative path of the folder containing the XML annotations files (from managed folder root)",
             "mandatory": true
         }
         //todo: implem fields for VOC pascal

@@ -36,26 +36,39 @@ def generate_path_list(folder: dataiku.Folder):
 
     return [folder.get_path_details(path) for path in path_list]
 
+def read_voc_annotation_file(annotation_file_stream):
+    image_annotations = []
+    tree = ET.parse(annotation_file_stream)
+    root = tree.getroot()
+
+    for o in root.iter('object'):
+        difficult = int(o.find('difficult').text == '1')
+        category = o.find('name').text.lower().strip()
+
+        bbox = o.find('bndbox')
+        xmin = int(bbox.find('xmin').text) - 1
+        ymin = int(bbox.find('ymin').text) - 1
+        xmax = int(bbox.find('xmax').text) - 1
+        ymax = int(bbox.find('ymax').text) - 1
+
+        height = ymax - ymin
+        width = xmax - xmin
+
+        image_annotations.append(
+            {"bbox": [xmin, ymin, width, height],
+             "area": height * width,
+             "iscrowd": False,
+             "category": category,
+             "difficult": difficult}
+        )
+    return image_annotations
+
 
 input_folder = dataiku.Folder(get_input_names_for_role("input_folder")[0])
 output_dataset = dataiku.Dataset(get_output_names_for_role("output_dataset")[0])
 
 parameters = get_recipe_config()
 input_data_format = parameters.get("input_data_format")
-
-# [folder.get_path_details(path) for path in generate_path_list(input_folder)]
-# folder.get_path_details(path) renvoie:
-# {'mimeType': 'image/jpeg',
-# 'truncated': False,
-# 'name': '000000182611.jpg',
-# 'fullPath': '/coco val2017/coco val2017/000000182611.jpg',
-# 'pathElts': ['', 'coco val2017', 'coco val2017', '000000182611.jpg'],
-# 'exists': True,
-# 'directory': False,
-# 'size': 139317,
-# 'lastModified': 1635252276000,
-# 'children': []}
-
 image_folder_path = parameters.get("image_folder_path")
 
 if input_data_format == "coco":
@@ -75,54 +88,31 @@ if input_data_format == "coco":
     for single_annotation in single_annotations:
         # add category name to annotation dict
         single_annotation["category"] = category_id_to_name.get(single_annotation.get("category_id"))
-        # todo: see if we should change bbox format ==> not for coco
 
         # a single image can have multiple annotations, add this one to the list (create a new list if needed)
         img_id = single_annotation.pop("image_id")
         annotations_per_img[img_id].append(single_annotation)
 
-    logging.info("annotations_per_img")
-    logging.info(annotations_per_img)
+    output_df = pd.DataFrame([{"target": annotations_per_img[img_id],
+                               "file_path": img_path}
+                              for img_id, img_path in images_id_to_path.items()])
 
 elif input_data_format == "voc":
-    logging.info("VOC pascal")
-    annotations_folder_path = parameters.get("annotations_folder_path")
-    logging.info("path details for annotations folder:")
-    logging.info(input_folder.get_path_details(path=annotations_folder_path))
+    logging.info("VOC pascal format")
+    folder_path_details = input_folder.get_path_details(path=parameters.get("annotations_folder_path"))
 
-    annotations_per_img = {}
-    # todo loop on all annotation folder path:
-    image_annotations = []
-    with input_folder.get_download_stream(annotations_folder_path + "IMG_2277_jpeg_jpg.rf.86c72d6192da48d941ffa957f4780665.xml") as stream:
-        tree = ET.parse(stream)
-        root = tree.getroot()
-
-        for o in root.iter('object'):
-            difficult = int(o.find('difficult').text == '1')
-            category = o.find('name').text.lower().strip()
-
-            bbox = o.find('bndbox')
-            xmin = int(bbox.find('xmin').text) - 1
-            ymin = int(bbox.find('ymin').text) - 1
-            xmax = int(bbox.find('xmax').text) - 1
-            ymax = int(bbox.find('ymax').text) - 1
-
-            height = ymax - ymin
-            width = xmax - xmin
-
-            image_annotations.append(
-                {"bbox": [xmin, ymin, width, height], "area": height * width, "iscrowd": False, "category": category,
-                 "difficult": difficult})
-    logging.info("single img annotations:")
-    logging.info(image_annotations)
-
+    output_list = []
+    for image_annotations_file in folder_path_details.get("children"):
+        with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
+            output_list.append({
+                "target": read_voc_annotation_file(annotations_file_stream),
+                "file_path": image_annotations_file.get("fullPath")
+            })
+            logging.info("Last row included: ")
+            logging.info(output_list[-1])
+    output_df = pd.DataFrame(output_list)
 
 else:
     raise Exception("Input format unknown: {}".format(input_data_format))
-
-
-output_df = pd.DataFrame([{"target": annotations_per_img[img_id],
-                           "file_path": img_path}
-                          for img_id, img_path in images_id_to_path.items()])
 
 output_dataset.write_with_schema(output_df)
