@@ -69,7 +69,7 @@
         },
         {
             "name": "annotations_file_path",
-            "visibilityCondition" : "model.data_format == 'coco'",
+            "visibilityCondition" : "model.input_data_format == 'coco'",
             "label": "Annotation file path",
             "type": "STRING",
             //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
@@ -78,7 +78,7 @@
         },
                 {
             "name": "annotations_folder_path",
-            "visibilityCondition" : "model.data_format == 'voc'",
+            "visibilityCondition" : "model.input_data_format == 'voc'",
             "label": "Image folder",
             "type": "STRING",
             //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
