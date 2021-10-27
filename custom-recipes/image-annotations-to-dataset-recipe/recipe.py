@@ -69,7 +69,7 @@ output_dataset = dataiku.Dataset(get_output_names_for_role("output_dataset")[0])
 
 parameters = get_recipe_config()
 input_data_format = parameters.get("input_data_format")
-image_folder_path = parameters.get("image_folder_path")
+images_folder_path = parameters.get("images_folder_path")
 
 if input_data_format == "coco":
     logging.info("COCO format")
@@ -79,7 +79,7 @@ if input_data_format == "coco":
     annotations_file_content = input_folder.read_json(parameters.get("annotations_file_path"))
 
     # build intermediate dicts to facilitate formatting:
-    images_id_to_path = {img.get("id"): os.path.join(image_folder_path, img.get("file_name"))
+    images_id_to_path = {img.get("id"): os.path.join(images_folder_path, img.get("file_name"))
                          for img in annotations_file_content.get("images")}
     category_id_to_name = {cat.get("id"): cat.get("name") for cat in annotations_file_content.get("categories")}
 
@@ -93,8 +93,8 @@ if input_data_format == "coco":
         img_id = single_annotation.pop("image_id")
         annotations_per_img[img_id].append(single_annotation)
 
-    output_df = pd.DataFrame([{"target": annotations_per_img[img_id],
-                               "file_path": img_path}
+    output_df = pd.DataFrame([{"image_annotations": annotations_per_img[img_id],
+                               "image_path": img_path}
                               for img_id, img_path in images_id_to_path.items()])
 
 elif input_data_format == "voc":
@@ -105,11 +105,11 @@ elif input_data_format == "voc":
     for image_annotations_file in folder_path_details.get("children"):
         with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
             output_list.append({
-                "target": read_voc_annotation_file(annotations_file_stream),
-                "file_path": image_annotations_file.get("fullPath")
+                "image_annotations": read_voc_annotation_file(annotations_file_stream),
+                "image_path": os.path.join(images_folder_path,
+                                           os.path.splitext(image_annotations_file.get("fullPath")),
+                                            ".jpg")  # extension might not always be .jpg, should list image folder to be sure?
             })
-            logging.info("Last row included: ")
-            logging.info(output_list[-1])
     output_df = pd.DataFrame(output_list)
 
 else:
