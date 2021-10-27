@@ -48,8 +48,8 @@
 
     "params": [
         {
-            "name": "data_format",
-            "label": "Data format",
+            "name": "input_data_format",
+            "label": "Input data format",
             "type": "SELECT",
             "selectChoices": [{ "value": "coco", "label": "COCO format"},
                               { "value": "voc", "label": "Pascal VOC"}
@@ -60,8 +60,7 @@
         },
         //todo implem a map where we can add multiple key/values instead of always two values ?
         {
-            "name": "image_folder",
-            "visibilityCondition" : "model.data_format == 'coco'",
+            "name": "image_folder_path",
             "label": "Image folder",
             "type": "STRING",
             //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
@@ -76,7 +75,16 @@
             //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
             "description": "Relative path of the annotations JSON file (from managed folder root)",
             "mandatory": true
-        }
+        },
+                {
+            "name": "annotations_folder_path",
+            "visibilityCondition" : "model.data_format == 'voc'",
+            "label": "Image folder",
+            "type": "STRING",
+            //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
+            "description": "Relative path of the folder containing the images (from managed folder root)",
+            "mandatory": true
+        },
         //todo: implem fields for VOC pascal
         // The 'COLUMNS' type works in the same way, except that it is a list of strings.
     ],

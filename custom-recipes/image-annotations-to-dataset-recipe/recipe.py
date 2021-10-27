@@ -6,6 +6,7 @@ from collections import defaultdict
 import pandas as pd
 import os
 import dataiku
+import xml.etree.ElementTree as ET
 
 from dataiku.core import dkujson
 from dataiku.customrecipe import get_recipe_config, get_input_names_for_role, get_output_names_for_role
@@ -40,9 +41,9 @@ input_folder = dataiku.Folder(get_input_names_for_role("input_folder")[0])
 output_dataset = dataiku.Dataset(get_output_names_for_role("output_dataset")[0])
 
 parameters = get_recipe_config()
-data_format = parameters.get("data_format")
+input_data_format = parameters.get("input_data_format")
 
-# logging.info(generate_path_list(input_folder))
+# [folder.get_path_details(path) for path in generate_path_list(input_folder)]
 # folder.get_path_details(path) renvoie:
 # {'mimeType': 'image/jpeg',
 # 'truncated': False,
@@ -55,9 +56,10 @@ data_format = parameters.get("data_format")
 # 'lastModified': 1635252276000,
 # 'children': []}
 
-if data_format == "coco":
-    logging.info("coco detected")
-    image_folder_path = parameters.get("image_folder")
+image_folder_path = parameters.get("image_folder_path")
+
+if input_data_format == "coco":
+    logging.info("COCO format")
 
     # annotations = dkujson.load_from_filepath(annotations_file_path) # ne marche qu'en local avec path complet.
     # ou alors fich = get_download_stream(filepath) puis dkujson.load_from_filepath(fich)?
@@ -73,7 +75,7 @@ if data_format == "coco":
     for single_annotation in single_annotations:
         # add category name to annotation dict
         single_annotation["category"] = category_id_to_name.get(single_annotation.get("category_id"))
-        # todo: see if we should change bbox format
+        # todo: see if we should change bbox format ==> not for coco
 
         # a single image can have multiple annotations, add this one to the list (create a new list if needed)
         img_id = single_annotation.pop("image_id")
@@ -81,6 +83,43 @@ if data_format == "coco":
 
     logging.info("annotations_per_img")
     logging.info(annotations_per_img)
+
+elif input_data_format == "voc":
+    logging.info("VOC pascal")
+    annotations_folder_path = parameters.get("annotations_folder_path")
+    logging.info("path details for annotations folder:")
+    logging.info(input_folder.get_path_details(path=annotations_folder_path))
+
+    annotations_per_img = {}
+    # todo loop on all annotation folder path:
+    image_annotations = []
+    with input_folder.get_download_stream(annotations_folder_path + "IMG_2277_jpeg_jpg.rf.86c72d6192da48d941ffa957f4780665.xml") as stream:
+        tree = ET.parse(stream)
+        root = tree.getroot()
+
+        for o in root.iter('object'):
+            difficult = int(o.find('difficult').text == '1')
+            category = o.find('name').text.lower().strip()
+
+            bbox = o.find('bndbox')
+            xmin = int(bbox.find('xmin').text) - 1
+            ymin = int(bbox.find('ymin').text) - 1
+            xmax = int(bbox.find('xmax').text) - 1
+            ymax = int(bbox.find('ymax').text) - 1
+
+            height = ymax - ymin
+            width = xmax - xmin
+
+            image_annotations.append(
+                {"bbox": [xmin, ymin, width, height], "area": height * width, "iscrowd": False, "category": category,
+                 "difficult": difficult})
+    logging.info("single img annotations:")
+    logging.info(image_annotations)
+
+
+else:
+    raise Exception("Input format unknown: {}".format(input_data_format))
+
 
 output_df = pd.DataFrame([{"target": annotations_per_img[img_id],
                            "file_path": img_path}
