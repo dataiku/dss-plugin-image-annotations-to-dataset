@@ -85,7 +85,6 @@
             "description": "Relative path of the folder containing the annotations files (from managed folder root)",
             "mandatory": true
         }
-        //todo: implem fields for VOC pascal
         // The 'COLUMNS' type works in the same way, except that it is a list of strings.
     ],
     // The field "resourceKeys" holds a list of keys that allows to limit the number

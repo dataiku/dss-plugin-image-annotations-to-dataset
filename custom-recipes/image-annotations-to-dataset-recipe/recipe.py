@@ -7,6 +7,7 @@ import pandas as pd
 import os
 import dataiku
 import xml.etree.ElementTree as ET
+import json
 
 from dataiku.core import dkujson
 from dataiku.customrecipe import get_recipe_config, get_input_names_for_role, get_output_names_for_role
@@ -74,8 +75,6 @@ images_folder_path = parameters.get("images_folder_path")
 if input_data_format == "coco":
     logging.info("COCO format")
 
-    # annotations = dkujson.load_from_filepath(annotations_file_path) # ne marche qu'en local avec path complet.
-    # ou alors fich = get_download_stream(filepath) puis dkujson.load_from_filepath(fich)?
     annotations_file_content = input_folder.read_json(parameters.get("annotations_file_path"))
 
     # build intermediate dicts to facilitate formatting:
@@ -93,7 +92,7 @@ if input_data_format == "coco":
         img_id = single_annotation.pop("image_id")
         annotations_per_img[img_id].append(single_annotation)
 
-    output_df = pd.DataFrame([{"image_annotations": annotations_per_img[img_id],
+    output_df = pd.DataFrame([{"image_annotations": json.dumps(annotations_per_img[img_id]),
                                "image_path": img_path}
                               for img_id, img_path in images_id_to_path.items()])
 
@@ -114,7 +113,7 @@ elif input_data_format == "voc":
             ))
         with input_folder.get_download_stream(xml_fullpath) as annotations_file_stream:
             output_list.append({
-                "image_annotations": read_voc_annotation_file(annotations_file_stream),
+                "image_annotations": json.dumps(read_voc_annotation_file(annotations_file_stream)),
                 "image_path": images_basename_to_fullpath.get(image_basename)
             })
     output_df = pd.DataFrame(output_list)
