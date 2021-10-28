@@ -107,7 +107,7 @@ elif input_data_format == "voc":
     # loop over annotations files from annotation folder:
     for image_annotations_file in input_folder.get_path_details(parameters.get("annotations_folder_path")).get("children"):
         xml_fullpath = image_annotations_file.get("fullPath")
-        image_basename = os.path.splitext(xml_fullpath)[0]
+        image_basename = os.path.splitext(image_annotations_file.get("name"))[0]
         if image_basename not in images_basename_to_fullpath:
             raise Exception("No image file corresponding to annotations file {} in folder {}".format(
                 xml_fullpath, images_folder_path
