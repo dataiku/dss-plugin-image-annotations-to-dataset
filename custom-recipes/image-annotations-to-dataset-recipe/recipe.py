@@ -99,16 +99,23 @@ if input_data_format == "coco":
 
 elif input_data_format == "voc":
     logging.info("VOC pascal format")
-    folder_path_details = input_folder.get_path_details(path=parameters.get("annotations_folder_path"))
+
+    images_basename_to_fullpath = {os.path.splitext(img.get("name"))[0]: img.get("fullPath")
+                                   for img in input_folder.get_path_details(images_folder_path).get("children")}
 
     output_list = []
-    for image_annotations_file in folder_path_details.get("children"):
-        with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
+    # loop over annotations files from annotation folder:
+    for image_annotations_file in input_folder.get_path_details(parameters.get("annotations_folder_path")).get("children"):
+        xml_fullpath = image_annotations_file.get("fullPath")
+        image_basename = os.path.splitext(xml_fullpath)[0]
+        if image_basename not in images_basename_to_fullpath:
+            raise Exception("No image file corresponding to annotations file {} in folder {}".format(
+                xml_fullpath, images_folder_path
+            ))
+        with input_folder.get_download_stream(xml_fullpath) as annotations_file_stream:
             output_list.append({
                 "image_annotations": read_voc_annotation_file(annotations_file_stream),
-                "image_path": os.path.join(images_folder_path,
-                                           os.path.splitext(image_annotations_file.get("fullPath")),
-                                            ".jpg")  # extension might not always be .jpg, should list image folder to be sure?
+                "image_path": images_basename_to_fullpath.get(image_basename)
             })
     output_df = pd.DataFrame(output_list)
 
