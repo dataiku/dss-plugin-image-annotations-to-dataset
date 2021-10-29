@@ -5,12 +5,15 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 import logging
 
+import numpy as np
 import pandas as pd
 
 
 def format_labelling_plugin_annotations(image_annotations):
     # images can be skipped in labelling plugin, in which case their annotations is nan
-    image_annotations = json.loads(str(image_annotations)) if str(image_annotations) != "" else []
+    logging.info(image_annotations)
+    logging.info(type(image_annotations))
+    image_annotations = json.loads(image_annotations) if isinstance(image_annotations, str) else []
     deephub_image_annotations = []
     for annotation in image_annotations:
         deephub_image_annotations.append(
