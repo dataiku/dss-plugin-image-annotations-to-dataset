@@ -11,8 +11,6 @@ import pandas as pd
 
 def format_labelling_plugin_annotations(image_annotations):
     # images can be skipped in labelling plugin, in which case their annotations is nan
-    logging.info(image_annotations)
-    logging.info(type(image_annotations))
     image_annotations = json.loads(image_annotations) if isinstance(image_annotations, str) else []
     deephub_image_annotations = []
     for annotation in image_annotations:
