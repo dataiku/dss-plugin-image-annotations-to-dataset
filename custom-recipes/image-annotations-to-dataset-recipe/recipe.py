@@ -7,37 +7,13 @@ import pandas as pd
 import os
 import dataiku
 import xml.etree.ElementTree as ET
+
 import json
 
-from dataiku.core import dkujson
 from dataiku.customrecipe import get_recipe_config, get_input_names_for_role, get_output_names_for_role
 
 
-# from lib import format_annotations
-def generate_path_list(folder: dataiku.Folder):
-    """Generate a dataframe of file paths in a Dataiku Folder matching a list of extensions
-    Args:
-        folder: Dataiku managed folder where files are stored
-            This folder can be partitioned or not, this function handles both
-        file_extensions: list of file extensions to match, ex: ["JPG", "PNG"]
-            Expected format is not case-sensitive but should not include leading "."
-        path_column: Name of the column in the output dataframe
-    Returns:
-        DataFrame with one column named `path_column` with all the file paths matching the list of `file_extensions`
-    Raises:
-        RuntimeError: If there are not files matching the list of `file_extensions`
-    """
-    path_list = []
-    if folder.read_partitions:
-        for partition in folder.read_partitions:
-            path_list += folder.list_paths_in_partition(partition)
-    else:
-        path_list = folder.list_paths_in_partition()  # ['/coco val2017/coco val2017/000000182611.jpg',  ... '/coco val2017.zip'] liste TOUT en relatif depuis racine
-        logging.info(path_list)
-
-    return [folder.get_path_details(path) for path in path_list]
-
-def read_voc_annotation_file(annotation_file_stream):
+def retrieve_annotations_from_xml_file(annotation_file_stream):
     image_annotations = []
     tree = ET.parse(annotation_file_stream)
     root = tree.getroot()
@@ -67,7 +43,6 @@ def read_voc_annotation_file(annotation_file_stream):
 
 input_folder = dataiku.Folder(get_input_names_for_role("input_folder")[0])
 output_dataset = dataiku.Dataset(get_output_names_for_role("output_dataset")[0])
-
 parameters = get_recipe_config()
 input_data_format = parameters.get("input_data_format")
 images_folder_path = parameters.get("images_folder_path")
@@ -92,8 +67,8 @@ if input_data_format == "coco":
         img_id = single_annotation.pop("image_id")
         annotations_per_img[img_id].append(single_annotation)
 
-    output_df = pd.DataFrame([{"image_annotations": json.dumps(annotations_per_img[img_id]),
-                               "image_path": img_path}
+    output_df = pd.DataFrame([{"images_annotations": json.dumps(annotations_per_img[img_id]),
+                               "images_path": img_path}
                               for img_id, img_path in images_id_to_path.items()])
 
 elif input_data_format == "voc":
@@ -113,8 +88,8 @@ elif input_data_format == "voc":
             ))
         with input_folder.get_download_stream(xml_fullpath) as annotations_file_stream:
             output_list.append({
-                "image_annotations": json.dumps(read_voc_annotation_file(annotations_file_stream)),
-                "image_path": images_basename_to_fullpath.get(image_basename)
+                "images_annotations": json.dumps(retrieve_annotations_from_xml_file(annotations_file_stream)),
+                "images_path": images_basename_to_fullpath.get(image_basename)
             })
     output_df = pd.DataFrame(output_list)
 
