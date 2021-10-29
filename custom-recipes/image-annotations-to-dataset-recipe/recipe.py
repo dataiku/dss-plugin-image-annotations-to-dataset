@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
     if input_data_format == "coco":
         logging.info("Input format of data: COCO format")
+        logging.info("Parameters are : {}".format(parameters))
 
         coco_json_file = input_folder.read_json(parameters["coco_json_filepath"])
         output_df = create_dataset_df_from_coco_json_file(coco_json_file, images_folder_path)
