@@ -79,7 +79,10 @@ def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotatio
 
     output_list = []
     # loop over annotations files from annotation folder:
-    xml_annotations_files = input_folder.get_path_details(annotations_folder_path).get("children", [])
+    children_files = input_folder.get_path_details(annotations_folder_path).get("children", [])
+    logging.info("filepath details:")
+    logging.info(children_files)
+    xml_annotations_files = [filedetails for filedetails in children_files if filedetails.get("name").endswith(".xml")]
     for image_annotations_file in xml_annotations_files:
         xml_fullpath = image_annotations_file.get("fullPath")
         image_basename = get_basename(image_annotations_file)
