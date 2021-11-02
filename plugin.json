@@ -3,7 +3,6 @@
     "version": "0.1.0",
     "meta": {
         "label": "Image annotations to Dataset",
-        "category": "Image annotations to Dataset",
         "description": "Plugin that adapt images annotations to DSS deeplearning format",
         "author": "Dataiku (Claire BEHUE)",
         "icon": "icon-exchange",
