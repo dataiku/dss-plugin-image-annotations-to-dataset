@@ -3,11 +3,11 @@
     // Meta data for display purposes
     "meta": {
         // label: name of the recipe as displayed, should be short
-        "label": "Create image annotations dataset",
+        "label": "Extract image annotations",
         // description: longer string to help end users understand what this recipe does
-        "description": "Recipe that creates a Dataset compatible with object detection in DSS, from a folder containing images and annotations of common formats (Coco, Pascal VOC).",
+        "description": "Extract image annotations from a folder containing images and annotations in Coco or Pascal VOC formats, into a dataset compatible with object detection in DSS.",
         // icon: must be one of the FontAwesome 3.2.1 icons, complete list here at https://fontawesome.com/v3.2.1/icons/
-        "icon": "icon-exchange"
+        "icon": "icon-picture"
     },
     "kind": "PYTHON",
     "selectableFromFolder": "input_folder",

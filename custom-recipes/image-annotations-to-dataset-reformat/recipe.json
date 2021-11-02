@@ -3,9 +3,9 @@
     // Meta data for display purposes
     "meta": {
         // label: name of the recipe as displayed, should be short
-        "label": "Format image annotations dataset",
+        "label": "Reformat image annotations",
         // description: longer string to help end users understand what this recipe does
-        "description": "Recipe that formats the image annotations dataset created with ML-assisted Labeling plugin into a dataset compatible with object detection in DSS.",
+        "description": "Reformat image annotations dataset created with ML-assisted Labeling plugin into a dataset compatible for object detection in DSS.",
 
         // icon: must be one of the FontAwesome 3.2.1 icons, complete list here at https://fontawesome.com/v3.2.1/icons/
         "icon": "icon-exchange"
