@@ -75,7 +75,8 @@ def retrieve_annotations_from_voc_xml_file(annotation_file):
 def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotations_folder_path):
     # build intermediate dicts to facilitate formatting:
     images_basename_to_fullpath = {get_basename(img_path): img_path.get("fullPath")
-                                   for img_path in input_folder.get_path_details(images_folder_path).get("children")}
+                                   for img_path in input_folder.get_path_details(images_folder_path).get("children")
+                                   if img_path.get("mimeType", "") != "application/xml"}  # should we only include image extensions?
 
     output_list = []
     # loop over annotations files from annotation folder:
