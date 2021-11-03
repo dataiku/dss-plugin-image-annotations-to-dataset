@@ -34,11 +34,6 @@ def create_dataset_df_from_coco_json_file(coco_json_file_content, images_folder_
                          for img_id, img_path in images_id_to_path.items()])
 
 
-def get_basename(path_details_dict):
-    """ :return file basename extracted from the "name" field of path_details_dict """
-    return os.path.splitext(path_details_dict.get("name"))[0]
-
-
 def retrieve_annotations_from_voc_xml_file(annotation_file_content):
     """
     :param annotation_file_content: file-like object containing xml annotations for a single image

@@ -5,26 +5,7 @@
 import pandas as pd
 import json
 import io
-import xml.etree.ElementTree as ET
-from lib import get_basename, create_dataset_df_from_coco_json_file, retrieve_annotations_from_voc_xml_file
-
-
-def test_get_basename():
-    path_details_dict = {
-        'mimeType': 'application/xml',
-        'truncated': False,
-        'name': 'IMG_2422_jpeg_jpg.rf.47bfe242cb40465122daa7d1189c8909.xml',
-        'fullPath': '/Aquarium Combined.v2-raw-1024.voc/Aquarium Combined.v2-raw-1024.voc/train/IMG_2422_jpeg_jpg.rf.47bfe242cb40465122daa7d1189c8909.xml',
-        'pathElts': ['', 'Aquarium Combined.v2-raw-1024.voc', 'Aquarium Combined.v2-raw-1024.voc', 'train',
-                     'IMG_2422_jpeg_jpg.rf.47bfe242cb40465122daa7d1189c8909.xml'],
-        'exists': True,
-        'directory': False,
-        'size': 4103,
-        'lastModified': 1635252565000,
-        'children': []
-    }
-    basename = get_basename(path_details_dict)
-    assert basename == "IMG_2422_jpeg_jpg.rf.47bfe242cb40465122daa7d1189c8909"
+from lib import create_dataset_df_from_coco_json_file, retrieve_annotations_from_voc_xml_file
 
 
 def test_create_dataset_df_from_coco_json_file():
