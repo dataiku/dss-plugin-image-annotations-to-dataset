@@ -18,7 +18,8 @@ if __name__ == '__main__':
 
     elif input_data_format == "voc":
         logging.info("Input format of data: VOC pascal format")
-        output_df = create_dataset_df_from_voc_files(input_folder, images_folder_path, parameters["annotations_folder_path"])
+        output_df = create_dataset_df_from_voc_files(input_folder, images_folder_path,
+                                                     parameters["annotations_folder_path"])
 
     else:
         raise Exception("Input format unknown: {}".format(input_data_format))
