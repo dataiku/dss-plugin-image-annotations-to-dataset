@@ -1,6 +1,6 @@
 {
     "id": "image-annotations-to-dataset",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "meta": {
         "label": "Image annotations to Dataset",
         "description": "Plugin that reformat or extract image annotations into a dataset compatible with object detection in DSS",

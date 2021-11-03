@@ -5,7 +5,7 @@
 import pandas as pd
 import json
 import io
-from lib import create_dataset_df_from_coco_json_file, retrieve_annotations_from_voc_xml_file
+from format_annotations_lib import create_dataset_df_from_coco_json_file, retrieve_annotations_from_voc_xml_file
 
 
 def test_create_dataset_df_from_coco_json_file():
