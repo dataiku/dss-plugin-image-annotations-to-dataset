@@ -4,24 +4,8 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 import logging
-
 import numpy as np
 import pandas as pd
-
-
-def format_labelling_plugin_annotations(image_annotations):
-    # images can be skipped in labelling plugin, in which case their annotations is nan
-    image_annotations = json.loads(image_annotations) if isinstance(image_annotations, str) else []
-    deephub_image_annotations = []
-    for annotation in image_annotations:
-        deephub_image_annotations.append(
-            {"bbox": [annotation.get("left"), annotation.get("top"), annotation.get("width"), annotation.get("height")],
-             "area": annotation.get("height") * annotation.get("width"),
-             "iscrowd": False,
-             "category": annotation.get("label")
-             })
-    image_annotations = json.dumps(deephub_image_annotations)
-    return image_annotations
 
 
 def create_dataset_df_from_coco_json_file(coco_json_file, images_folder_path):
@@ -44,6 +28,7 @@ def create_dataset_df_from_coco_json_file(coco_json_file, images_folder_path):
 
 def get_basename(path_details_dict):
     return os.path.splitext(path_details_dict.get("name"))[0]
+
 
 def retrieve_annotations_from_voc_xml_file(annotation_file):
     image_annotations = []
@@ -71,6 +56,7 @@ def retrieve_annotations_from_voc_xml_file(annotation_file):
              "difficult": difficult}
         )
     return image_annotations
+
 
 def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotations_folder_path):
     # build intermediate dicts to facilitate formatting:

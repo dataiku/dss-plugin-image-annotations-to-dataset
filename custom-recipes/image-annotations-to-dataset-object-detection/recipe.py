@@ -2,7 +2,6 @@
 
 import logging
 import dataiku
-
 from dataiku.customrecipe import get_recipe_config, get_input_names_for_role, get_output_names_for_role
 from lib import create_dataset_df_from_coco_json_file, create_dataset_df_from_voc_files
 
