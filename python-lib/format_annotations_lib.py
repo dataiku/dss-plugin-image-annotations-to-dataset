@@ -105,7 +105,7 @@ def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotatio
                     "images_path": os.path.join(images_folder_path, image_filename)
                 })
             except (ET.ParseError, AttributeError) as e:
-                logging.warning("XML file {} could not be parsed as an annotation file, skipping (Catched error {})"
+                logging.warning("XML file {} could not be parsed as an annotation file, skipping ({})"
                                 .format(image_annotations_file.get("fullPath"), e))
 
     if len(output_list) == 0:
