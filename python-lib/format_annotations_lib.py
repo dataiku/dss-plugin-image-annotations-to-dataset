@@ -4,6 +4,7 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 import pandas as pd
+import logging
 
 
 def create_dataset_df_from_coco_json_file(coco_json_file_content, images_folder_path):
@@ -91,12 +92,23 @@ def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotatio
                              for details in input_folder.get_path_details(annotations_folder_path).get("children", [])
                              if details.get("mimeType", "") == "application/xml"]
 
+    if len(xml_annotations_files) == 0:
+        raise Exception("No annotation-xml file had been found in folder {}, stopping.".format(annotations_folder_path))
+
     for image_annotations_file in xml_annotations_files:
         with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
 
-            image_annotations, image_filename = retrieve_annotations_from_voc_xml_file(annotations_file_stream)
-            output_list.append({
-                "images_annotations": json.dumps(image_annotations),
-                "images_path": os.path.join(images_folder_path, image_filename)
-            })
+            try:
+                image_annotations, image_filename = retrieve_annotations_from_voc_xml_file(annotations_file_stream)
+                output_list.append({
+                    "images_annotations": json.dumps(image_annotations),
+                    "images_path": os.path.join(images_folder_path, image_filename)
+                })
+            except ET.ParseError:
+                logging.warning("XML file {} could not be parsed as an annotation file, skipping".format(
+                    image_annotations_file.get("fullPath")
+                ))
+
+    if len(output_list) == 0:
+        raise Exception("All the xml files found were badly formatted, stopping")
     return pd.DataFrame(output_list)
