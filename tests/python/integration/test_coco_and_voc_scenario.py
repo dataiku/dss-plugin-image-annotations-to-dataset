@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 from dku_plugin_test_utils import dss_scenario
 
