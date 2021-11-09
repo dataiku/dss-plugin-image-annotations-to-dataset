@@ -7,7 +7,7 @@ import pandas as pd
 import logging
 
 
-def create_dataset_df_from_coco_json_file(coco_json_file_content, images_folder_path):
+def create_dataframe_from_coco_json(coco_json_file_content, images_folder_path):
     """
     :param coco_json_file_content: Dict from coco json file containing 3 sections:
                 - "images" : mapping between images-ids and images filenames
@@ -19,14 +19,14 @@ def create_dataset_df_from_coco_json_file(coco_json_file_content, images_folder_
              Format compatible with deephub object detection.
     """
     # build intermediate dicts to facilitate formatting:
-    images_id_to_path = {img.get("id"): os.path.join(images_folder_path, img.get("file_name"))
-                         for img in coco_json_file_content.get("images")}
-    category_id_to_name = {cat.get("id"): cat.get("name") for cat in coco_json_file_content.get("categories")}
+    images_id_to_path = {img["id"]: os.path.join(images_folder_path, img["file_name"])
+                         for img in coco_json_file_content["images"]}
+    category_id_to_name = {cat["id"]: cat["name"] for cat in coco_json_file_content["categories"]}
 
     annotations_per_img = defaultdict(list)
-    for single_annotation in coco_json_file_content.get("annotations", []):
+    for single_annotation in coco_json_file_content["annotations"]:
         # add category name to annotation dict
-        single_annotation["category"] = category_id_to_name.get(single_annotation.get("category_id"))
+        single_annotation["category"] = category_id_to_name[single_annotation["category_id"]]
 
         # a single image can have multiple annotations, add this one to the list (create a new list if needed)
         img_id = single_annotation.pop("image_id")
@@ -42,11 +42,8 @@ def retrieve_annotations_from_voc_xml_file(annotation_file_content):
                 - 'filename': name (including extension) of the image
                 - list of 'object' with 'name' (category), 'difficult' and 'bndbox' (xmin, xmax, ymin, ymax)
     :return: tuple of image_annotations, image_filename where image_annotations is a list of dicts of the form:
-            {"bbox": [xmin, ymin, width, height],
-             "area": 14560,
-             "iscrowd": False,
-             "category": "jellyfish",
-             "difficult": 0}
+            {"bbox": [xmin, ymin, width, height]
+             "category": "jellyfish" }
     """
     image_annotations = []
     tree = ET.parse(annotation_file_content)
@@ -64,18 +61,14 @@ def retrieve_annotations_from_voc_xml_file(annotation_file_content):
         height = ymax - ymin
         width = xmax - xmin
 
-        image_annotations.append(
-            {"bbox": [xmin, ymin, width, height],
-             "area": height * width,  # to remove?
-             "iscrowd": False,  # to remove?
-             "category": o.find('name').text.lower().strip(),
-             "difficult": int(o.find('difficult').text == '1')  # to remove?
-             }
-        )
+        image_annotations.append({
+            "bbox": [xmin, ymin, width, height],
+            "category": o.find('name').text.lower().strip()
+        })
     return image_annotations, image_filename
 
 
-def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotations_folder_path):
+def create_dataframe_from_voc_files(input_folder, images_folder_path, annotations_folder_path):
     """
         :param input_folder: DSS managed folder
         :param images_folder_path: base path for the images (will be used as a prefix to create image full path)
@@ -93,7 +86,7 @@ def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotatio
                              if details.get("mimeType", "") == "application/xml"]
 
     if len(xml_annotations_files) == 0:
-        raise Exception("No annotation-xml file had been found in folder {}, stopping.".format(annotations_folder_path))
+        raise Exception("No annotation-xml file had been found in folder {}.".format(annotations_folder_path))
 
     for image_annotations_file in xml_annotations_files:
         with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
@@ -109,5 +102,5 @@ def create_dataset_df_from_voc_files(input_folder, images_folder_path, annotatio
                                 .format(image_annotations_file.get("fullPath"), e))
 
     if len(output_list) == 0:
-        raise Exception("All the xml files found were badly formatted, stopping")
+        raise Exception("All the xml files found were badly formatted.")
     return pd.DataFrame(output_list)

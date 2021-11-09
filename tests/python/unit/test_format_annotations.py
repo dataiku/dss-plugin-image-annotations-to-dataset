@@ -5,7 +5,7 @@
 import pandas as pd
 import json
 import io
-from format_annotations_lib import create_dataset_df_from_coco_json_file, retrieve_annotations_from_voc_xml_file
+from format_annotations import create_dataframe_from_coco_json, retrieve_annotations_from_voc_xml_file
 
 
 def test_create_dataset_df_from_coco_json_file():
@@ -81,7 +81,7 @@ def test_create_dataset_df_from_coco_json_file():
         "images_path": ['coco_aquarium/coco_aquarium/valid/toto.jpg', 'coco_aquarium/coco_aquarium/valid/tata.jpeg']
     })
 
-    output_df = create_dataset_df_from_coco_json_file(coco_json_file_content, images_folder_path)
+    output_df = create_dataframe_from_coco_json(coco_json_file_content, images_folder_path)
     assert isinstance(output_df, pd.DataFrame)
     assert expected_df.equals(output_df)
 
