@@ -13,13 +13,14 @@ def create_dataframe_from_coco_json(coco_json_file_content, images_folder_path):
                 - "images" : mapping between images-ids and images filenames
                 - "categories" : mapping between categories-ids and categories names
                 - "annotations" : associates images-ids with categories-ids and gives the bounding boxes coordinates.
+                see https://cocodataset.org/#format-data for more details on COCO format.
     :param images_folder_path: base path for the images (will be used as a prefix to create image full path)
 
     :return: Dataframe containing two columns : images_annotations and images_path (from input folder), 1 row per image.
              Format compatible with deephub object detection.
     """
     # build intermediate dicts to facilitate formatting:
-    images_id_to_path = {img["id"]: os.path.join(images_folder_path, img["file_name"])
+    images_id_to_path = {img["id"]: images_folder_path + "/" + img["file_name"]
                          for img in coco_json_file_content["images"]}
     category_id_to_name = {cat["id"]: cat["name"] for cat in coco_json_file_content["categories"]}
 
@@ -38,9 +39,11 @@ def create_dataframe_from_coco_json(coco_json_file_content, images_folder_path):
 def retrieve_annotations_from_voc_xml_file(annotation_file_content):
     """
     :param annotation_file_content: file-like object containing xml annotations for a single image
-           It must contain: (see Pascal VOC format)
+           It must contain:
                 - 'filename': name (including extension) of the image
                 - list of 'object' with 'name' (category), 'difficult' and 'bndbox' (xmin, xmax, ymin, ymax)
+           see Pascal VOC format for object detection:
+           http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/devkit_doc.html#SECTION00050000000000000000
     :return: tuple of image_annotations, image_filename where image_annotations is a list of dicts of the form:
             {"bbox": [xmin, ymin, width, height]
              "category": "jellyfish" }
@@ -95,7 +98,7 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
                 image_annotations, image_filename = retrieve_annotations_from_voc_xml_file(annotations_file_stream)
                 output_list.append({
                     "images_annotations": json.dumps(image_annotations),
-                    "images_path": os.path.join(images_folder_path, image_filename)
+                    "images_path": images_folder_path + "/" + image_filename
                 })
             except (ET.ParseError, AttributeError) as e:
                 logging.warning("XML file {} could not be parsed as an annotation file, skipping ({})"
