@@ -91,7 +91,7 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
         raise Exception("No annotation-xml file had been found in folder {}.".format(annotations_folder_path))
 
     subdirs = [p.get("fullPath") for p in input_folder_children ] # if p['directory']
-    logging.info(subdirs)
+    logging.info(input_folder_children)
     if images_folder_path not in subdirs:
         raise Exception("Images path {} does not exist in input folder".format(images_folder_path))
 
