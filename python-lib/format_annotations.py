@@ -74,21 +74,22 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
     """
         :param input_folder: DSS managed folder
         :param images_folder_path: base path for the images (will be used as a prefix to create image full path)
-        :param annotations_folder_path: path of the folder containing all the xml annotations files
+        :param annotations_folder_path: path of the folder containing all the XML annotations files
 
         :return: Dataframe containing two columns : images_annotations and images_path (from input folder), 1 row per image.
                  Format compatible with deephub object detection.
     """
 
     output_list = []
-    # loop over annotations files from annotation folder & retrieve only xml files
-    # (annotations & images files might be in the same folder)
-    input_folder_children = input_folder.get_path_details(annotations_folder_path).get("children", [])
-    xml_annotations_files = [details
-                             for details in input_folder_children if details.get("mimeType", "") == "application/xml"]
+    annotations_folder_details = input_folder.get_path_details(annotations_folder_path)
+    if not annotations_folder_details['exists']:
+        raise Exception("Annotation folder path '{}' not found in input folder".format(annotations_folder_path))
 
+    # loop over files from annotation folder & retrieve only XML files: annotations & images might be in the same folder
+    xml_annotations_files = [details for details in annotations_folder_details.get("children", [])
+                             if details.get("mimeType", "") == "application/xml"]
     if len(xml_annotations_files) == 0:
-        raise Exception("No annotation-xml file had been found in folder {}.".format(annotations_folder_path))
+        raise Exception("No annotation-XML file had been found in folder {}.".format(annotations_folder_path))
 
     for image_annotations_file in xml_annotations_files:
         with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
@@ -103,5 +104,5 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
                                 .format(image_annotations_file.get("fullPath"), e))
 
     if len(output_list) == 0:
-        raise Exception("All the xml files found were badly formatted.")
+        raise Exception("All the XML files found were badly formatted.")
     return pd.DataFrame(output_list)

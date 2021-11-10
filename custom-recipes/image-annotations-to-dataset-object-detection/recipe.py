@@ -15,7 +15,10 @@ if not input_folder.get_path_details(images_folder_path)["exists"]:
 if input_data_format == "coco":
     logging.info("Annotations format: COCO format")
 
+    if not input_folder.get_path_details(parameters["coco_json_filepath"])["exists"]:
+        raise Exception("Annotation file '{}' not found in folder".format(parameters["coco_json_filepath"]))
     coco_json_file = input_folder.read_json(parameters["coco_json_filepath"])
+
     output_df = create_dataframe_from_coco_json(coco_json_file, images_folder_path)
 
 elif input_data_format == "voc":
