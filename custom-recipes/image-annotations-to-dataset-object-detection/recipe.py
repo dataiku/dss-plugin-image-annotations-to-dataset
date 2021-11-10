@@ -7,7 +7,7 @@ from format_annotations import create_dataframe_from_coco_json, create_dataframe
 
 input_folder = dataiku.Folder(get_input_names_for_role("input_folder")[0])
 parameters = get_recipe_config()
-input_data_format, images_folder_path = parameters["input_data_format"], parameters["images_folder_path"]
+input_data_format, images_folder_path = parameters["input_data_format"], parameters.get("images_folder_path", "")
 
 if input_data_format == "coco":
     logging.info("Annotations format: COCO format")

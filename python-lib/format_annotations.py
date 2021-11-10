@@ -84,16 +84,18 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
     output_list = []
     # loop over annotations files from annotation folder & retrieve only xml files
     # (annotations & images files might be in the same folder)
+    input_folder_children = input_folder.get_path_details(annotations_folder_path).get("children", [])
     xml_annotations_files = [details
-                             for details in input_folder.get_path_details(annotations_folder_path).get("children", [])
-                             if details.get("mimeType", "") == "application/xml"]
+                             for details in input_folder_children if details.get("mimeType", "") == "application/xml"]
 
     if len(xml_annotations_files) == 0:
         raise Exception("No annotation-xml file had been found in folder {}.".format(annotations_folder_path))
 
+    if images_folder_path not in [p.get("fullPath") for p in input_folder_children]:
+        raise Exception("Image path {} does not exist in input folder".format(images_folder_path))
+
     for image_annotations_file in xml_annotations_files:
         with input_folder.get_download_stream(image_annotations_file.get("fullPath")) as annotations_file_stream:
-
             try:
                 image_annotations, image_filename = retrieve_annotations_from_voc_xml_file(annotations_file_stream)
                 output_list.append({
