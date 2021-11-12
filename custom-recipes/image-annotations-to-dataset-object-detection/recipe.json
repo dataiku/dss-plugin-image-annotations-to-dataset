@@ -59,7 +59,7 @@
             "mandatory": true
         },
         {
-            "name": "annotations_folder_path",
+            "name": "voc_annotations_folder_path",
             "visibilityCondition" : "model.input_data_format == 'voc'",
             "label": "Annotations folder",
             "type": "STRING",

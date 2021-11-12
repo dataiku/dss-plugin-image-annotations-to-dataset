@@ -45,7 +45,7 @@ def retrieve_annotations_from_voc_xml(annotation_file):
 
             /!\ from Pascal VOC documentation "The top-left pixel in the image has coordinates (1,1)"
            see http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/devkit_doc.html#SECTION00050000000000000000
-           hence we need to remove this offset to be compliant with Pytorch.
+           hence we need to remove this offset to be compliant with DSS.
 
     :return: tuple of image_annotations, image_filename where image_annotations is a list of dicts of the form:
             {"bbox": [xmin, ymin, width, height]
