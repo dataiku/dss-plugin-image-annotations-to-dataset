@@ -6,4 +6,5 @@ This repository contains a recipe to transform annotations from common object de
 into a Dataset compatible for object detection in DSS.
 
 
-
+Warning: note that in official Pascal-VOC format "The top-left pixel in the image has coordinates (1,1)". Thus the 
+recipe will remove this 1-pixel offset to return 0-based coordinates PyTorch compliant.

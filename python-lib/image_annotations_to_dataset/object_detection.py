@@ -38,12 +38,15 @@ def create_dataframe_from_coco_json(coco_json_file_content, images_folder_path):
 
 def retrieve_annotations_from_voc_xml(annotation_file):
     """
-    :param annotation_file: file-like object containing xml annotations for a single image
+    :param annotation_file: file-like object containing xml annotations for a single image (Pascal VOC format)
            It must contain:
                 - 'filename': name (including extension) of the image
                 - list of 'object' with 'name' (category), and 'bndbox' (xmin, xmax, ymin, ymax)
-           see Pascal VOC format for object detection:
-           http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/devkit_doc.html#SECTION00050000000000000000
+
+            /!\ from Pascal VOC documentation "The top-left pixel in the image has coordinates (1,1)"
+           see http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/devkit_doc.html#SECTION00050000000000000000
+           hence we need to remove this offset to be compliant with Pytorch.
+
     :return: tuple of image_annotations, image_filename where image_annotations is a list of dicts of the form:
             {"bbox": [xmin, ymin, width, height]
              "category": "jellyfish" }
