@@ -5,10 +5,10 @@
 import pandas as pd
 import json
 import io
-from format_annotations import create_dataframe_from_coco_json, retrieve_annotations_from_voc_xml_file
+from image_annotations_to_dataset.object_detection import create_dataframe_from_coco_json, retrieve_annotations_from_voc_xml
 
 
-def test_create_dataset_df_from_coco_json_file():
+def test_create_dataframe_from_coco_json():
     images_folder_path = 'coco_aquarium/coco_aquarium/valid'
     coco_json_file_content = {
         "categories": [
@@ -83,7 +83,7 @@ def test_create_dataset_df_from_coco_json_file():
     assert expected_df.equals(output_df)
 
 
-def test_retrieve_annotations_from_voc_xml_file():
+def test_retrieve_annotations_from_voc_xml():
 
     with io.StringIO(
             """<annotation>
@@ -116,7 +116,7 @@ def test_retrieve_annotations_from_voc_xml_file():
             {"bbox":  [0, 17, 293, 175], "category": "fish"}
         ]
         expected_image_filename = "toto.jpg"
-        image_annotations, image_filename = retrieve_annotations_from_voc_xml_file(annotation_file_content)
+        image_annotations, image_filename = retrieve_annotations_from_voc_xml(annotation_file_content)
 
         assert isinstance(image_annotations, list)
         assert expected_image_annotations == image_annotations
