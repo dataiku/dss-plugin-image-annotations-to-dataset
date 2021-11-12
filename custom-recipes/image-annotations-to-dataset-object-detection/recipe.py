@@ -23,8 +23,13 @@ if input_data_format == "coco":
 
 elif input_data_format == "voc":
     logging.info("Annotations format: VOC pascal format")
-    output_df = create_dataframe_from_voc_files(input_folder, images_folder_path,
-                                                parameters["annotations_folder_path"])
+
+    annotations_folder_details = input_folder.get_path_details(parameters["annotations_folder_path"])
+    if not annotations_folder_details['exists'] or not annotations_folder_details['directory']:
+        raise Exception("Annotation folder path '{}' not found in input folder or not a folder itself"
+                        .format(parameters["annotations_folder_path"]))
+
+    output_df = create_dataframe_from_voc_files(input_folder, images_folder_path, annotations_folder_details)
 
 else:
     raise Exception("Annotations format unknown: {}".format(input_data_format))

@@ -9,7 +9,7 @@ from format_annotations import create_dataframe_from_coco_json, retrieve_annotat
 
 
 def test_create_dataset_df_from_coco_json_file():
-    images_folder_path = 'coco_aquarium/coco_aquarium/valid/'
+    images_folder_path = 'coco_aquarium/coco_aquarium/valid'
     coco_json_file_content = {
         "categories": [
             {"id": 3, "name": "fish"},
@@ -68,14 +68,11 @@ def test_create_dataset_df_from_coco_json_file():
     expected_df = pd.DataFrame({
         "images_annotations": [
             json.dumps([
-                {"id": 0, "category_id": 5, "bbox": [138, 316, 391, 364], "area": 142324, "segmentation": [],
-                 "iscrowd": 0, "category": "jellyfish"},
-                {"id": 1, "category_id": 12, "bbox": [126, 395, 94, 181], "area": 17014, "segmentation": [],
-                 "iscrowd": 0, "category": "penguin"}
+                {"category": "jellyfish", "bbox": [138, 316, 391, 364]},
+                {"category": "penguin", "bbox": [126, 395, 94, 181]}
             ]),
             json.dumps([
-                {"id": 2, "category_id": 5, "bbox": [331, 761, 436, 163], "area": 71068, "segmentation": [],
-                 "iscrowd": 0, "category": "jellyfish"}
+                {"category": "jellyfish", "bbox": [331, 761, 436, 163]}
             ])
         ],
         "images_path": ['coco_aquarium/coco_aquarium/valid/toto.jpg', 'coco_aquarium/coco_aquarium/valid/tata.jpeg']
@@ -114,18 +111,9 @@ def test_retrieve_annotations_from_voc_xml_file():
             </object>
             </annotation>"""
     ) as annotation_file_content:
-
         expected_image_annotations = [
-            {"bbox": [416, 272, 56, 260],
-             "area": 14560,
-             "iscrowd": False,
-             "category": "jellyfish",
-             "difficult": 0},
-            {"bbox":  [0, 17, 293, 175],
-             "area": 51275,
-             "iscrowd": False,
-             "category": "fish",
-             "difficult": 1}
+            {"bbox": [416, 272, 56, 260], "category": "jellyfish"},
+            {"bbox":  [0, 17, 293, 175], "category": "fish"}
         ]
         expected_image_filename = "toto.jpg"
         image_annotations, image_filename = retrieve_annotations_from_voc_xml_file(annotation_file_content)

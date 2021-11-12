@@ -33,7 +33,7 @@
             "name": "input_data_format",
             "label": "Input data format",
             "type": "SELECT",
-            "selectChoices": [{ "value": "coco", "label": "COCO format"},
+            "selectChoices": [{ "value": "coco", "label": "COCO"},
                               { "value": "voc", "label": "Pascal VOC"}
             ],
             "defaultValue" : "coco", // todo here prefill with smarter choice once we add format guesser
@@ -55,7 +55,7 @@
             "label": "Annotations file path",
             "type": "STRING",
             //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
-            "description": "Relative path of the annotations JSON file (from managed folder root. including filename)",
+            "description": "Relative path of the annotations JSON file (from managed folder root, including filename)",
             "mandatory": true
         },
         {
