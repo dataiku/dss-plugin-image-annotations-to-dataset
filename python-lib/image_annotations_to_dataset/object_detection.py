@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 import pandas as pd
 import logging
+from dataiku.base.utils import safe_exception
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +92,10 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
     xml_annotations_files = [details for details in annotations_folder_details["children"]
                              if details.get("mimeType", "") == "application/xml"]
     if len(xml_annotations_files) == 0:
-        raise Exception("No annotation-XML file had been found in folder {}."
-                        .format(annotations_folder_details.get("fullPath")))
+        raise safe_exception(
+            Exception,
+            "No annotation-XML file had been found in folder {}.".format(annotations_folder_details["fullPath"])
+        )
 
     for annotations_file in xml_annotations_files:
         with input_folder.get_download_stream(annotations_file.get("fullPath")) as annotations_file_stream:
@@ -107,5 +110,5 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
                                   .format(annotations_file.get("fullPath")))
 
     if len(output_list) == 0:
-        raise Exception("All the XML files found were badly formatted.")
+        raise safe_exception(Exception, "All the XML files found were badly formatted.")
     return pd.DataFrame(output_list)
