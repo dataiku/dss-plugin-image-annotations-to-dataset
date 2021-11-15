@@ -98,7 +98,7 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
         )
 
     for annotations_file in xml_annotations_files:
-        with input_folder.get_download_stream(annotations_file.get("fullPath")) as annotations_file_stream:
+        with input_folder.get_download_stream(annotations_file["fullPath"]) as annotations_file_stream:
             try:
                 image_annotations, image_filename = retrieve_annotations_from_voc_xml(annotations_file_stream)
                 output_list.append({
@@ -107,7 +107,7 @@ def create_dataframe_from_voc_files(input_folder, images_folder_path, annotation
                 })
             except (ET.ParseError, AttributeError) as e:
                 logging.exception("XML file {} could not be parsed as an annotation file, skipping"
-                                  .format(annotations_file.get("fullPath")))
+                                  .format(annotations_file["fullPath"]))
 
     if len(output_list) == 0:
         raise safe_exception(Exception, "All the XML files found were badly formatted.")
