@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 import json
+import sys
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 import pandas as pd
 import logging
-from dataiku.base.utils import safe_exception
 
 logger = logging.getLogger(__name__)
+
+
+def safe_exception(cls, msg):
+    """
+    COPIED from dataiku module (to allow unit testing the following methods)
+    Returns an exception with correct type for message: utf-8 encoded for python2, unicode (str) for python3
+    so that is displayed correctly
+    """
+    major_version = sys.version_info[0]
+    if major_version == 2 and isinstance(msg, unicode):
+        msg = msg.encode("utf-8")
+    return cls(msg)
 
 
 def create_dataframe_from_coco_json(coco_json_file_content, images_folder_path):
@@ -21,6 +33,7 @@ def create_dataframe_from_coco_json(coco_json_file_content, images_folder_path):
     :return: Dataframe containing two columns : images_annotations and images_path (from input folder), 1 row per image.
              Format compatible with deephub object detection.
     """
+
     # build intermediate dicts to facilitate formatting:
     images_id_to_path = {img["id"]: images_folder_path + "/" + img["file_name"]
                          for img in coco_json_file_content["images"]}
@@ -44,7 +57,7 @@ def retrieve_annotations_from_voc_xml(annotation_file):
                 - 'filename': name (including extension) of the image
                 - list of 'object' with 'name' (category), and 'bndbox' (xmin, xmax, ymin, ymax)
 
-            /!\ from Pascal VOC documentation "The top-left pixel in the image has coordinates (1,1)"
+            Warning: from Pascal VOC documentation "The top-left pixel in the image has coordinates (1,1)"
            see http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/devkit_doc.html#SECTION00050000000000000000
            hence we need to remove this offset to be compliant with DSS.
 
