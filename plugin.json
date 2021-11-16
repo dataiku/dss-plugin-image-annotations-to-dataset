@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "meta": {
         "label": "Image annotations to Dataset",
-        "description": "Plugin that reformat or extract image annotations into a dataset compatible with object detection in DSS",
+        "description": "Plugin that converts image annotations into a dataset compatible with object detection in DSS",
         "author": "Dataiku (Claire BEHUE)",
         "icon": "icon-picture",
         "licenseInfo": "Apache Software License",

@@ -36,16 +36,14 @@
             "selectChoices": [{ "value": "coco", "label": "COCO"},
                               { "value": "voc", "label": "Pascal VOC"}
             ],
-            "defaultValue" : "coco", // todo here prefill with smarter choice once we add format guesser
+            "defaultValue" : "coco",
             "description": "Format of your input's data",
             "mandatory": true
         },
-        //todo implem a map where we can add multiple key/values instead of always two values ?
         {
             "name": "images_folder_path",
             "label": "Images folder",
             "type": "STRING",
-            //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
             "description": "Relative path of the folder containing the images (from managed folder root. Leave empty if images are not in a subfolder)",
             "mandatory": false
         },
@@ -54,7 +52,6 @@
             "visibilityCondition" : "model.input_data_format == 'coco'",
             "label": "Annotations file path",
             "type": "STRING",
-            //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
             "description": "Relative path of the annotations JSON file (from managed folder root, including filename)",
             "mandatory": true
         },
@@ -63,7 +60,6 @@
             "visibilityCondition" : "model.input_data_format == 'voc'",
             "label": "Annotations folder",
             "type": "STRING",
-            //"defaultValue" : "", todo here prefill with smarter choice once we add format guesser
             "description": "Relative path of the folder containing the annotations files (from managed folder root. Leave empty if annotations files are not in a subfolder)",
             "mandatory": false
         }
