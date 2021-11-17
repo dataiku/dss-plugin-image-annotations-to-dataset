@@ -1,17 +1,16 @@
 {
-    "id": "your-plugin-id",
-    "version": "0.1.0",
+    "id": "image-annotations-to-dataset",
+    "version": "1.0.0",
     "meta": {
-        "label": "Plugin template - Replace by your plugin label",
-        "category": "Your category (optional)",
-        "description": "Your description (keep it short and simple)",
-        "author": "Organization (firstName LASTNAME)",
-        "icon": "icon-font-awesome-3.2.1",
+        "label": "Image annotations to Dataset",
+        "description": "Plugin that converts image annotations into a dataset compatible with object detection in DSS",
+        "author": "Dataiku (Claire BEHUE)",
+        "icon": "icon-picture",
         "licenseInfo": "Apache Software License",
-        "url": "https://www.dataiku.com/product/plugins/your-plugin-id/",
+        "url": "https://www.dataiku.com/product/plugins/image-annotations-to-dataset/",
         "tags": [
-            "myTag"
+            "Deep Learning", "Data Preparation", "Computer Vision", "Labeling"
         ],
-        "supportLevel": "NOT_SUPPORTED"
+        "supportLevel": "SUPPORTED"
     }
 }

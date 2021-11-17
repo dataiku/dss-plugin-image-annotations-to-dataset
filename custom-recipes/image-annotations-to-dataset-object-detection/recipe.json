@@ -1,0 +1,68 @@
+{
+    "meta": {
+        "label": "Convert object detection annotations",
+        "description": "Convert image annotations from a folder containing images and annotations in Coco or Pascal VOC formats, into a dataset compatible with object detection in DSS.",
+        "icon": "icon-picture"
+    },
+    "kind": "PYTHON",
+    "selectableFromFolder": "input_folder",
+    "inputRoles": [
+        {
+            "name": "input_folder",
+            "label": "Input Folder",
+            "description": "Folder containing the different images and annotations.",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": false,
+            "acceptsManagedFolder": true
+        }
+    ],
+    "outputRoles": [
+        {
+            "name": "output_dataset",
+            "label": "Output Dataset",
+            "description": "Dataset where each row represent an image from the input folder.",
+            "arity": "UNARY",
+            "required": false,
+            "acceptsDataset": true,
+            "acceptsManagedFolder": false
+        }
+    ],
+    "params": [
+        {
+            "name": "input_data_format",
+            "label": "Input data format",
+            "type": "SELECT",
+            "selectChoices": [{ "value": "coco", "label": "COCO"},
+                              { "value": "voc", "label": "Pascal VOC"}
+            ],
+            "defaultValue" : "coco",
+            "description": "Format of your input's data",
+            "mandatory": true
+        },
+        {
+            "name": "images_folder_path",
+            "label": "Images folder",
+            "type": "STRING",
+            "description": "Relative path of the folder containing the images (from managed folder root. Leave empty if images are not in a subfolder)",
+            "mandatory": false
+        },
+        {
+            "name": "coco_json_filepath",
+            "visibilityCondition" : "model.input_data_format == 'coco'",
+            "label": "Annotations file path",
+            "type": "STRING",
+            "description": "Relative path of the annotations JSON file (from managed folder root, including filename)",
+            "mandatory": true
+        },
+        {
+            "name": "voc_annotations_folder_path",
+            "visibilityCondition" : "model.input_data_format == 'voc'",
+            "label": "Annotations folder",
+            "type": "STRING",
+            "description": "Relative path of the folder containing the annotations files (from managed folder root. Leave empty if annotations files are not in a subfolder)",
+            "mandatory": false
+        }
+    ],
+    "resourceKeys": []
+}

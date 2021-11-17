@@ -1,13 +1,4 @@
 # Changelog
 
-## Version X.Y.Z - Type of release (*) - YYYY-MM-DD
-- Changes 1 ...
-- Changes 2 ... 
-- ...
-
-(*) Possible types of releases
-
-- Initial release
-- Bugfix release
-- Feature release
-- .... 
+## Version 1.0.0 - Feature release - 2021-11
+- ✨ Added a recipe which converts object detection annotations from common formats into a dataset compatible with DSS computer vision (introduced in DSS 10.0)
