@@ -10,4 +10,4 @@ into a Dataset compatible for object detection in DSS.
 Warning: note that in official Pascal-VOC format "The top-left pixel in the image has coordinates (1,1)". Thus the 
 recipe will remove this 1-pixel offset to return 0-based coordinates that are DSS compliant.
 
-Plugin documentation on how to use & how to install the plugin can be found [here](<https://www.dataiku.com/product/plugins/image-annotations-to-dataset>)
+Plugin documentation on how to use & how to install the plugin can be found [here](<https://doc.dataiku.com/dss/latest/unstructured-data/image/image-annotations-to-dataset.html>)
